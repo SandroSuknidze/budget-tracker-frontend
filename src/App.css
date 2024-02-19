@@ -117,3 +117,15 @@ input:valid + .login-label.error {
   color: red;
 }
 
+.login-invalid-credentials {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 10px;
+  background-color: #f3b2b2;
+  margin-top: 10px;
+}
+
+.close-icon {
+  width: 20px;
+  cursor: pointer;
+}

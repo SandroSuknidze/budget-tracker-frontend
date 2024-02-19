@@ -1,6 +1,7 @@
 import LoginButton from "./LoginButton.jsx";
 import {useForm} from "react-hook-form";
 import LoginInput from "./LoginInput.jsx";
+import LoginInvalidCredentials from "./LoginInvalidCredentials.jsx";
 
 function LoginForm() {
     const {
@@ -42,6 +43,7 @@ function LoginForm() {
                 errorMessage={errors.password?.message}
             />
             <LoginButton disabled={!isValid}/>
+            <LoginInvalidCredentials visibility={false}/>
         </form>
     );
 }
