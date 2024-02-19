@@ -1,9 +1,9 @@
-function LoginInput({ id, label, error, register, errorMessage }) {
+function LoginInput({ id, label, type, error, register, errorMessage }) {
     return (
         <div className="login-input-wrapper">
             <input
                 className={`login-input ${error ? "error" : ""}`}
-                type="text"
+                type={type}
                 id={id}
                 {...register}
                 required

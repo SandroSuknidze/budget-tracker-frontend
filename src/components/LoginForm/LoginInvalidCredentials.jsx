@@ -1,14 +1,15 @@
-import {useState} from "react";
-
-function LoginInvalidCredentials({ visibility }) {
-    const [invalidCredentials, setInvalidCredentials] = useState(visibility);
-
+function LoginInvalidCredentials({ visibility, setVisibility  }) {
     return (
         <div>
-            {invalidCredentials &&
+            {visibility &&
                 <div className="login-invalid-credentials">
-                    Incorrect email or password <img className="close-icon" onClick={() => setInvalidCredentials(false)}
-                                                     src="images/close-icon.svg" alt="close-icon"/>
+                    Incorrect email or password
+                    <img
+                        className="close-icon"
+                        onClick={() => setVisibility(false)}
+                        src="images/close-icon.svg"
+                        alt="close-icon"
+                    />
                 </div>
             }
         </div>

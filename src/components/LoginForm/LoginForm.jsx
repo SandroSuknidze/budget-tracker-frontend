@@ -2,6 +2,8 @@ import LoginButton from "./LoginButton.jsx";
 import {useForm} from "react-hook-form";
 import LoginInput from "./LoginInput.jsx";
 import LoginInvalidCredentials from "./LoginInvalidCredentials.jsx";
+import axios from "axios";
+import {useState} from "react";
 
 function LoginForm() {
     const {
@@ -12,8 +14,26 @@ function LoginForm() {
         mode: "all",
     });
 
-    const onSubmit = (data) => {
+    const [invalidCredentialsVisibility, setInvalidCredentialsVisibility] = useState(false);
+
+    const onSubmit = async (data) => {
         console.log(data);
+
+        try {
+            const response = await axios.post(
+                "http://localhost:8000/api/login",
+                data
+            );
+            console.log(data);
+            if (response.status === 200) {
+                setInvalidCredentialsVisibility(false);
+            } else {
+                setInvalidCredentialsVisibility(true);
+            }
+        } catch (err) {
+            console.log(err);
+            setInvalidCredentialsVisibility(true);
+        }
 
     };
 
@@ -22,6 +42,7 @@ function LoginForm() {
             <LoginInput
                 id="Email"
                 label="Email"
+                type="text"
                 error={errors.email}
                 register={register("email", {
                     required: "Required field is empty",
@@ -36,6 +57,7 @@ function LoginForm() {
             <LoginInput
                 id="Password"
                 label="Password"
+                type="password"
                 error={errors.password}
                 register={register("password", {
                     required: "Required field is empty",
@@ -43,7 +65,7 @@ function LoginForm() {
                 errorMessage={errors.password?.message}
             />
             <LoginButton disabled={!isValid}/>
-            <LoginInvalidCredentials visibility={false}/>
+            <LoginInvalidCredentials visibility={invalidCredentialsVisibility} setVisibility={setInvalidCredentialsVisibility} />
         </form>
     );
 }
