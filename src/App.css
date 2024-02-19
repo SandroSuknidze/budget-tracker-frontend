@@ -68,6 +68,11 @@
   cursor: pointer;
 }
 
+.login-button:disabled {
+  cursor: default;
+  background-color: #d9eaef;
+}
+
 .login-eye-icon {
   position: absolute;
   top: 50%;
@@ -101,14 +106,9 @@ input:valid + .login-label {
   font-size: 13px;
 }
 
-
 .login-input.error {
   border: 1px solid red;
 }
-
-/*.login-label.error {*/
-/*  color: red;*/
-/*}*/
 
 input:focus + .login-label.error,
 input:valid + .login-label.error {

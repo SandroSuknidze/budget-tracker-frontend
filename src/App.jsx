@@ -1,5 +1,5 @@
 import './App.css'
-import LoginForm from "./components/LoginPage/LoginForm.jsx";
+import LoginPage from "./pages/LoginPage/LoginPage.jsx";
 
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
         <div>
             <div className="background-image">
                 <div className="container">
-                    <LoginForm />
+                    <LoginPage />
                 </div>
             </div>
         </div>

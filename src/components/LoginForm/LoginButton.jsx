@@ -1,4 +1,4 @@
-function LoginButton({ disabled }) {
+function LoginButton({ disabled = true }) {
     return (
         <div>
             <button type="submit" className="login-button" disabled={disabled}>Login</button>
