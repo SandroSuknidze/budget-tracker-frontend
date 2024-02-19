@@ -11,6 +11,11 @@ function LoginInput({ id, label, type, error, register, errorMessage }) {
             <label htmlFor={id} className={`login-label ${error ? "error" : ""}`}>
                 {label}
             </label>
+            <div className="login-eye-icon">
+                {type === "password" &&
+                    <img src="images/eye-icon.svg" alt="eye-icon"/>
+                }
+            </div>
             {error && <p className="login-error">{errorMessage}</p>}
         </div>
     );
