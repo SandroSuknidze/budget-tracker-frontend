@@ -2,8 +2,8 @@ import LoginButton from "./LoginButton.jsx";
 import {useForm} from "react-hook-form";
 import LoginInput from "./LoginInput.jsx";
 import LoginInvalidCredentials from "./LoginInvalidCredentials.jsx";
-import axios from "axios";
 import {useState} from "react";
+import axiosInstance from "../../utils/axios-instance.js";
 
 function LoginForm() {
     const {
@@ -20,9 +20,9 @@ function LoginForm() {
         console.log(data);
 
         try {
-            const response = await axios.post(
-                "http://localhost:8000/api/login",
-                data
+            const response = await axiosInstance.post(
+                "/login",
+                data,
             );
             console.log(data);
             if (response.status === 200) {
