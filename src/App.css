@@ -129,3 +129,83 @@ input:valid + .login-label.error {
   width: 20px;
   cursor: pointer;
 }
+
+
+
+/* the below code fragment can be found in: HomePage */
+
+.padding {
+  padding: 50px 44px 0 44px;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-end {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 7px;
+}
+
+.name {
+  cursor: pointer;
+  position: relative;
+}
+
+ul, li, a {
+  text-decoration: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: black;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: absolute;
+  top: 80px;
+  border: 1px solid lightgray;
+  background-color: lightgray;
+  padding: 10px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.modal.open {
+  display: block;
+}
+
+.modal-content {
+  background-color: #fff;
+  width: 300px;
+  margin: 100px auto;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  margin: 0 10px;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.modal-buttons button:hover {
+  background-color: #f0f0f0;
+}
