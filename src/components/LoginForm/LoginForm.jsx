@@ -4,6 +4,9 @@ import LoginInput from "./LoginInput.jsx";
 import LoginInvalidCredentials from "./LoginInvalidCredentials.jsx";
 import {useState} from "react";
 import axiosInstance from "../../utils/axios-instance.js";
+import useSignIn from "react-auth-kit/hooks/useSignIn";
+import {useNavigate} from "react-router-dom";
+import Cookies from "js-cookie";
 
 function LoginForm() {
     const {
@@ -14,19 +17,36 @@ function LoginForm() {
         mode: "all",
     });
 
+    const signIn = useSignIn();
+    const navigate = useNavigate();
     const [invalidCredentialsVisibility, setInvalidCredentialsVisibility] = useState(false);
 
     const onSubmit = async (data) => {
-        console.log(data);
-
         try {
-            const response = await axiosInstance.post(
+            const res = await axiosInstance.post(
                 "/login",
                 data,
             );
-            console.log(data);
-            if (response.status === 200) {
+
+            if (res.status === 200) {
                 setInvalidCredentialsVisibility(false);
+                if (signIn({
+                    auth: {
+                        token: res.data.token,
+                        type: 'Bearer',
+                    },
+                    userState: {
+                        name: res.data.user.email,
+                        uid: res.data.user.id,
+                    },
+                })){
+
+                    const expirationDate = res.data.expires;
+
+                    Cookies.set('_auth', res.data.token, { expires: expirationDate  });
+
+                    return navigate("/");
+                }
             } else {
                 setInvalidCredentialsVisibility(true);
             }
