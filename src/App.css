@@ -55,7 +55,7 @@
 
 .login-button {
   margin-top: 34px;
-  background-color: #B9E2E6;
+  background-color: #B9E2E6 !important;
   width: 349px;
   height: 55px;
   border-radius: 10px;
@@ -134,6 +134,11 @@ input:valid + .login-label.error {
 
 /* the below code fragment can be found in: HomePage */
 
+.grid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
 .padding {
   padding: 50px 44px 0 44px;
 }
@@ -144,7 +149,7 @@ input:valid + .login-label.error {
 
 .nav-end {
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   column-gap: 7px;
 }
 
@@ -168,6 +173,17 @@ ul, li, a {
   border: 1px solid lightgray;
   background-color: lightgray;
   padding: 10px;
+}
+
+.create-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+textarea {
+  box-shadow: 0 -1px 0 1px rgba(0, 0, 0, 0.1);
 }
 
 .modal {
@@ -209,3 +225,49 @@ ul, li, a {
 .modal-buttons button:hover {
   background-color: #f0f0f0;
 }
+
+.nav-mid {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  column-gap: 35px;
+}
+
+.nav-text {
+  font-family: AlataRegular, sans-serif;
+  line-height: 28px;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.account {
+  background: url("assets/create-account-background.png") center;
+  height: 185px;
+  width: 430px;
+  background-size: cover;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+
+}
+
+.circle {
+  width: 90px;
+  height: 90px;
+  color: white;
+}
+
+.add-account {
+  display: flex;
+  justify-content: space-between;
+  font-size: 32px;
+}
+
+#title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+
