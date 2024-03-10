@@ -15,8 +15,11 @@ function HomePage() {
     const [showModal, setShowModal] = useState(false);
     const [showAccountModal, setShowAccountModal] = useState(false);
     const [showToaster, setShowToaster] = useState(false);
+    const [toasterText, setToasterText] = useState("");
     const [accounts, setAccounts] = useState([])
     const [selectedAccountIndex, setSelectedAccountIndex] = useState(0);
+    const [editAccount, setEditAccount] = useState(0);
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const authUser = useAuthUser();
     const authState = useAuthHeader();
 
@@ -24,7 +27,7 @@ function HomePage() {
 
     useEffect(() => {
         function fetchAccounts() {
-            axiosInstance.get("/account", {
+            axiosInstance.get("/accounts", {
                 headers: {
                     Authorization: `${authState}`
                 }
@@ -38,7 +41,7 @@ function HomePage() {
                 });
         }
         fetchAccounts();
-    }, [authState]);
+    }, [authState, editAccount, showToaster]);
 
     function toggleDropdown() {
         setShowDropdown(!showDropdown);
@@ -49,20 +52,42 @@ function HomePage() {
     }
 
     function toggleAccountModal() {
+        setEditAccount(0);
         setShowAccountModal(!showAccountModal);
     }
 
-    function toggleToaster() {
+    function toggleToaster(text) {
 
         setShowToaster(!showToaster);
+        setToasterText(text);
         setTimeout(() => {
             setShowToaster(false)
+            setToasterText("");
         }, 5000);
     }
 
     const handleSelectAccount = (index) => {
         setSelectedAccountIndex(index);
     };
+
+    const handleEditAccount = (id) => {
+        setEditAccount(id);
+    }
+
+    function toggleShowConfirmation(num) {
+        setShowConfirmation(!showConfirmation);
+        if (num === 1) {
+            setEditAccount(0);
+            setShowToaster(!showToaster);
+            setToasterText("Account is successfully deleted!");
+            setTimeout(() => {
+                setShowToaster(false)
+                setToasterText("");
+            }, 5000);
+        }
+    }
+
+
 
 
     return (
@@ -73,7 +98,7 @@ function HomePage() {
                         <h1 className="nav-text">Budgetify</h1>
                     </div>
                     <ul className="nav-mid w-[43%] text-[20px] relative">
-                        <Toaster text={"The Account created"} isOpen={showToaster} onClose={toggleToaster}/>
+                        <Toaster text={toasterText} isOpen={showToaster} onClose={toggleToaster}/>
                         <li>
                             <a>Categories</a>
                         </li>
@@ -110,7 +135,7 @@ function HomePage() {
                 </nav>
             </header>
             <LogoutModal isOpen={showModal} onClose={toggleModal}/>
-            <CreateAccountModal isOpen={showAccountModal} onClose={toggleAccountModal} activateToaster={toggleToaster}/>
+            <CreateAccountModal isOpen={showAccountModal} onClose={toggleAccountModal} activateToaster={toggleToaster} editAccount={editAccount}/>
             <div className="flex justify-between items-center mt-[45px]">
                     {accounts.length === 0 ? (
                             <div className="w-[35%]" onClick={toggleAccountModal}>
@@ -121,12 +146,18 @@ function HomePage() {
                             {accounts.map((account, index) => (
                                 <CardAccount
                                     key={index}
+                                    id={account.id}
                                     title={account.title}
                                     currency={account.currency}
                                     balance={account.balance}
                                     description={account.description}
                                     onClick={() => handleSelectAccount(index)}
                                     isSelected={index === selectedAccountIndex}
+                                    editAccount={handleEditAccount}
+                                    onCloseCreateAccount={toggleAccountModal}
+
+                                    showConfirmation={showConfirmation}
+                                    toggleShowConfirmation={toggleShowConfirmation}
                                 />
                             ))}
                         </div>

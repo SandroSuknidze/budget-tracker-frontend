@@ -3,10 +3,37 @@ import axiosInstance from "../utils/axios-instance.js";
 import {useForm} from "react-hook-form";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
-function CreateAccountModal({onClose, isOpen, activateToaster}) {
+function CreateAccountModal({onClose, isOpen, activateToaster, editAccount, }) {
     const authState = useAuthHeader();
     const [currencies, setCurrencies] = useState([]);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        async function fetchAccount() {
+            if(editAccount !== 0) {
+                try {
+                    if (editAccount !== 0) {
+                        const res = await axiosInstance.get("/account", {
+                            params: {
+                                id: editAccount
+                            },
+                            headers: {
+                                Authorization: `${authState}`
+                            }
+                        });
+                        setValue("title", res.data[0].title);
+                        setValue("description", res.data[0].description);
+                        setValue("currency", res.data[0].currency);
+                    }
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            }
+        }
+
+        fetchAccount();
+    }, [editAccount, authState]);
+
 
     const {
         register,
@@ -17,7 +44,9 @@ function CreateAccountModal({onClose, isOpen, activateToaster}) {
     } = useForm({
         mode: "all",
         defaultValues: {
-            currency: ""
+            currency: "",
+            title: "",
+            description: "",
         }
     });
 
@@ -40,6 +69,8 @@ function CreateAccountModal({onClose, isOpen, activateToaster}) {
                     let currency = res.data[0].find(row => row[0] === country)
 
                     setValue("currency", `${currency[2]} (${currency[3]})`);
+                    setValue("title", "");
+                    setValue("description", "");
                     setCurrencies(res.data[0]);
                 } else {
                     console.error("Error fetching data:", res);
@@ -50,23 +81,41 @@ function CreateAccountModal({onClose, isOpen, activateToaster}) {
         }
 
         fetchData();
-    }, [setValue]);
+    }, [setValue, editAccount]);
 
     const onSubmit = async (data) => {
-        try {
-            const res = await axiosInstance.post("/account", data, {
-                headers: {
-                    Authorization: `${authState}`
+        if (editAccount === 0) {
+            try {
+                const res = await axiosInstance.post(`/account`, data, {
+                    headers: {
+                        Authorization: `${authState}`
+                    },
+                });
+                if (res.status === 201) {
+                    setError("");
+                    reset({ title: "", description: "" });
+                    onClose();
+                    activateToaster("The Account created!");
                 }
-            });
-            if (res.status === 201) {
-                setError("");
-                reset({ title: "", description: "" });
-                onClose();
-                activateToaster();
+            } catch (err) {
+                setError(err.response.data.errors.title[0])
             }
-        } catch (err) {
-            setError(err.response.data.errors.title[0])
+        } else {
+            try {
+                const res = await axiosInstance.put(`/account/${editAccount}`, data, {
+                    headers: {
+                        Authorization: `${authState}`
+                    },
+                });
+                if (res.status === 201) {
+                    setError("");
+                    reset({ title: "", description: "" });
+                    onClose();
+                    activateToaster("The Account successfully edited!");
+                }
+            } catch (err) {
+                setError(err.response.data.errors.title[0])
+            }
         }
     }
 
@@ -74,7 +123,7 @@ function CreateAccountModal({onClose, isOpen, activateToaster}) {
         <div className={`${isOpen ? 'block' : 'hidden'} fixed z-10 top-0 left-0 w-full h-screen bg-black bg-opacity-50`}>
             <div className="w-[400px] h-[450px] create-modal bg-white rounded-lg">
                 <div className="relative p-2 border-b-[1px] border-b-black">
-                    <div className="text-center">Create Account</div>
+                    <div className="text-center">{editAccount ? 'Edit Account' : 'Create Account'}</div>
                     <div onClick={onClose} className="px-5 absolute top-[18%] right-0 cursor-pointer">X</div>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>

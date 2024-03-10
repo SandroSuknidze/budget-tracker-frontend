@@ -1,21 +1,29 @@
 import pencilIcon from '../assets/pencil.svg'
 import trashIcon from '../assets/trash.svg'
 import closeIcon from '../assets/close.svg'
+import ConfirmationModal from "./ConfirmationModal.jsx";
 
 
-function AccountInfoModal({title, currency, balance, description, isOpen, onClose}) {
+function AccountInfoModal({id, title, currency, balance, description, isOpen, onClose, editAccount, onCloseCreateAccount,
+                              showConfirmation ,toggleShowConfirmation }) {
+
     return (
         <div>
+            <ConfirmationModal showConfirmation={showConfirmation} toggleShowConfirmation={toggleShowConfirmation} id={id} onClose={onClose}/>
             <div className={`overlay ${isOpen ? "block" : "hidden"}`}>
                 <div className="account-info-modal p-8 h-full">
                     {/*head*/}
                     <div className="flex text-3xl justify-between pt-2">
                         <div className=" ">Account Information</div>
                         <div className="flex gap-2">
-                            <div className="cursor-pointer" >
+                            <div className="cursor-pointer" onClick={() => {
+                                onClose();
+                                onCloseCreateAccount();
+                                editAccount(id);
+                            }}>
                                 <img src={pencilIcon} alt="close-icon"/>
                             </div>
-                            <div className="cursor-pointer" >
+                            <div className="cursor-pointer" onClick={toggleShowConfirmation}>
                                 <img src={trashIcon} alt="close-icon"/>
                             </div>
                             <div className="cursor-pointer" onClick={onClose}>

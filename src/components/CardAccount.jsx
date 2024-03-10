@@ -1,7 +1,19 @@
 import AccountInfoModal from "./AccountInfoModal.jsx";
 import {useState} from "react";
 
-function CardAccount({title, currency, balance, description, isSelected, onClick}) {
+function CardAccount({
+                         id,
+                         title,
+                         currency,
+                         balance,
+                         description,
+                         isSelected,
+                         onClick,
+                         editAccount,
+                         onCloseCreateAccount,
+                         showConfirmation,
+                         toggleShowConfirmation,
+                     }) {
     const [showAccountInfo, setShowAccountInfo] = useState(false);
 
     function handleShowAccountInfo() {
@@ -28,12 +40,18 @@ function CardAccount({title, currency, balance, description, isSelected, onClick
                 </div>
             </div>
             <AccountInfoModal
+                id={id}
                 isOpen={showAccountInfo}
                 onClose={handleShowAccountInfo}
                 title={title}
                 currency={currency}
                 description={description}
                 balance={balance}
+                editAccount={editAccount}
+                onCloseCreateAccount={onCloseCreateAccount}
+
+                showConfirmation={showConfirmation}
+                toggleShowConfirmation={toggleShowConfirmation}
             />
         </>
 
