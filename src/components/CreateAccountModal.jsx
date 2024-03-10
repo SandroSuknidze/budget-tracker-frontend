@@ -86,7 +86,7 @@ function CreateAccountModal({onClose, isOpen, activateToaster}) {
                                    {...register("title", {
                                        required: "Required field is empty",
                                        pattern: {
-                                           value: /^[a-zA-Z0-9_\p{L}]*$/u,
+                                           value: /^[a-zA-Z0-9_\p{L} ]*$/u,
                                            message: 'Invalid Title entered. Please check it'
                                        },
                                        maxLength: {

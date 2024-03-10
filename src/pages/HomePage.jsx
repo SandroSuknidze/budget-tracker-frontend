@@ -1,20 +1,44 @@
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import avatar from "../assets/avatar.svg";
 import search from "../assets/search.svg";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import LogoutModal from "../components/LogoutModal.jsx";
 import CreateAccount from "../components/CreateAccount.jsx";
 import CreateAccountModal from "../components/CreateAccountModal.jsx";
 import Toaster from "../components/Toaster.jsx";
+import axiosInstance from "../utils/axios-instance.js";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import CardAccount from "../components/CardAccount.jsx";
 
 function HomePage() {
     const [showDropdown, setShowDropdown] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showAccountModal, setShowAccountModal] = useState(false);
     const [showToaster, setShowToaster] = useState(false);
+    const [accounts, setAccounts] = useState([])
+    const [selectedAccountIndex, setSelectedAccountIndex] = useState(0);
     const authUser = useAuthUser();
+    const authState = useAuthHeader();
 
     let name = authUser.name.split('@')[0];
+
+    useEffect(() => {
+        function fetchAccounts() {
+            axiosInstance.get("/account", {
+                headers: {
+                    Authorization: `${authState}`
+                }
+            })
+             .then(res => {
+                    setAccounts(res.data);
+                    console.log(res.data);
+                })
+             .catch(err => {
+                    console.log(err);
+                });
+        }
+        fetchAccounts();
+    }, [authState]);
 
     function toggleDropdown() {
         setShowDropdown(!showDropdown);
@@ -36,8 +60,13 @@ function HomePage() {
         }, 5000);
     }
 
+    const handleSelectAccount = (index) => {
+        setSelectedAccountIndex(index);
+    };
+
+
     return (
-        <div className="container padding bg-bgPrimary h-screen">
+        <div className="container padding bg-bgPrimary h-screen relative">
             <header>
                 <nav className="navbar">
                     <div className="w-[35%]">
@@ -83,9 +112,26 @@ function HomePage() {
             <LogoutModal isOpen={showModal} onClose={toggleModal}/>
             <CreateAccountModal isOpen={showAccountModal} onClose={toggleAccountModal} activateToaster={toggleToaster}/>
             <div className="flex justify-between items-center mt-[45px]">
-                <div className="w-[35%]" onClick={toggleAccountModal}>
-                    <CreateAccount />
-                </div>
+                    {accounts.length === 0 ? (
+                            <div className="w-[35%]" onClick={toggleAccountModal}>
+                                <CreateAccount />
+                            </div>
+                    ) : (
+                        <div className="w-[35%] mb-auto relative flex flex-col">
+                            {accounts.map((account, index) => (
+                                <CardAccount
+                                    key={index}
+                                    title={account.title}
+                                    currency={account.currency}
+                                    balance={account.balance}
+                                    description={account.description}
+                                    onClick={() => handleSelectAccount(index)}
+                                    isSelected={index === selectedAccountIndex}
+                                />
+                            ))}
+                        </div>
+                    )}
+
                 <div className="w-[43%] mb-auto relative">
                     <input type="text" placeholder="Search" className="pt-[15px] px-[48px] pb-[16px] rounded-[10px] w-full"/>
                     <img src={search} alt="search-icon" className="w-[22px] h-[22px] absolute top-[15px] left-[20px]"/>
@@ -94,6 +140,15 @@ function HomePage() {
                     Income
                 </div>
             </div>
+            {accounts.length !== 0 && (
+                <div onClick={toggleAccountModal}
+                     className="absolute bottom-0 left-0 border-1 border-solid rounded-tr-2xl
+                        bg-fuchsia-600 text-white text-5xl px-5 h-[45px] cursor-pointer">
+                    +
+                </div>
+            )
+
+            }
         </div>
     );
 }
