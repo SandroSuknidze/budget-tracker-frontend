@@ -8,7 +8,7 @@ export default {
     extend: {
       theme: {
         color: {
-          bgPrimary: "#ECEDED",
+          'bgPrimary': "#ECEDED",
         }
       }
     },

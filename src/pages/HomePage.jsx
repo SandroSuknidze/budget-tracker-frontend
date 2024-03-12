@@ -1,7 +1,11 @@
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import avatar from "../assets/avatar.svg";
 import search from "../assets/search.svg";
-import {useEffect, useState} from "react";
+import arrowDown from "../assets/arrow-down.svg";
+import arrowUp from "../assets/arrow-up.svg";
+import plusIcon from "../assets/raw-plus-icon.svg";
+import piggyIcon from "../assets/piggy-bank-icon.png";
+import {useEffect, useRef, useState} from "react";
 import LogoutModal from "../components/LogoutModal.jsx";
 import CreateAccount from "../components/CreateAccount.jsx";
 import CreateAccountModal from "../components/CreateAccountModal.jsx";
@@ -88,12 +92,25 @@ function HomePage() {
     }
 
 
+    const contentRef = useRef(null);
+    const [maxHeight, setMaxHeight] = useState('auto');
 
+    useEffect(() => {
+        function updateMaxHeight() {
+            const windowHeight = window.innerHeight - 135;
+            setMaxHeight(windowHeight + 'px');
+        }
+
+        window.addEventListener('resize', updateMaxHeight);
+        updateMaxHeight();
+
+        return () => window.removeEventListener('resize', updateMaxHeight);
+    }, []);
 
     return (
-        <div className="container padding bg-bgPrimary h-screen relative">
-            <header>
-                <nav className="navbar">
+        <div className="container pt-0 padding bg-bgPrimary h-screen relative">
+            <header className="h-[45px] bg-bgPrimary">
+                <nav className="navbar pt-[50px] pb-[45px]">
                     <div className="w-[35%]">
                         <h1 className="nav-text">Budgetify</h1>
                     </div>
@@ -136,13 +153,14 @@ function HomePage() {
             </header>
             <LogoutModal isOpen={showModal} onClose={toggleModal}/>
             <CreateAccountModal isOpen={showAccountModal} onClose={toggleAccountModal} activateToaster={toggleToaster} editAccount={editAccount}/>
-            <div className="flex justify-between items-center mt-[45px]">
+            <div className="flex justify-between items-center mt-[90px]">
                     {accounts.length === 0 ? (
                             <div className="w-[35%]" onClick={toggleAccountModal}>
                                 <CreateAccount />
                             </div>
                     ) : (
-                        <div className="w-[35%] mb-auto relative flex flex-col">
+                        <div ref={contentRef} className="w-[35%] mb-auto relative flex flex-col overflow-y-scroll"
+                             style={{ maxHeight: maxHeight, scrollbarWidth: 'none' }}>
                             {accounts.map((account, index) => (
                                 <CardAccount
                                     key={index}
@@ -167,19 +185,74 @@ function HomePage() {
                     <input type="text" placeholder="Search" className="pt-[15px] px-[48px] pb-[16px] rounded-[10px] w-full"/>
                     <img src={search} alt="search-icon" className="w-[22px] h-[22px] absolute top-[15px] left-[20px]"/>
                 </div>
-                <div className="w-[22%] mb-auto text-right">
-                    Income
+                <div ref={contentRef} className="w-[22%] mb-auto text-right pl-[82px] flex flex-col justify-between" style={{ height: maxHeight }}>
+                    <div className="flex flex-col gap-[15px]">
+                        <div className="flex border border-solid bg-white rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
+                            <div className={"sm-circle bg-[#21C206] p-[5px]"}>
+                                <img src={arrowDown} alt="arrow-down-icon"/>
+                            </div>
+                            <div className="mt-auto mb-auto">
+                                Income
+                            </div>
+                        </div>
+                        <div className="flex border border-solid bg-white rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
+                            <div className={"sm-circle bg-[#EE3F19] p-[5px]"}>
+                                <img src={arrowUp} alt="arrow-up-icon"/>
+                            </div>
+                            <div className="mt-auto mb-auto">
+                                Expenses
+                            </div>
+                        </div>
+                        <div className="flex border border-solid bg-[#B9E2E6] rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
+                            <div className={"sm-circle bg-white p-[5px]"}>
+                                <img src={plusIcon} alt="plus-icon"/>
+                            </div>
+                            <div className="mt-auto mb-auto">
+                                Add Transaction
+                            </div>
+                        </div>
+                        <div onClick={toggleAccountModal}
+                             className="flex border border-solid bg-[#B9E2E6] rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
+                            <div className={"sm-circle bg-white p-[5px]"}>
+                                <img src={plusIcon} alt="plus-icon"/>
+                            </div>
+                            <div className="mt-auto mb-auto">
+                                Add Account
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-[15px] pb-[21px]">
+                        <div
+                            className="flex border border-solid bg-[#B9E2E6] rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
+                            <div className={"sm-circle bg-white p-[5px]"}>
+                                <img src={piggyIcon} alt="piggy-icon"/>
+                            </div>
+                            <div className="mt-auto mb-auto">
+                                Add Piggy Bank
+                            </div>
+                        </div>
+                        <div
+                            className="flex border border-solid bg-[#FECEE2] rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
+                            <div className={"sm-circle bg-white p-[5px]"}>
+                                <img src={piggyIcon} alt="piggy-icon"/>
+                            </div>
+                            <div className="mt-auto mb-auto">
+                                Apartment
+                            </div>
+                        </div>
+                        <div
+                            className="flex border border-solid bg-[#FECEE2] rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
+                            <div className={"sm-circle bg-white p-[5px]"}>
+                                <img src={piggyIcon} alt="piggy-icon"/>
+                            </div>
+                            <div className="mt-auto mb-auto">
+                                Car
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {accounts.length !== 0 && (
-                <div onClick={toggleAccountModal}
-                     className="absolute bottom-0 left-0 border-1 border-solid rounded-tr-2xl
-                        bg-fuchsia-600 text-white text-5xl px-5 h-[45px] cursor-pointer">
-                    +
-                </div>
-            )
-
-            }
         </div>
     );
 }

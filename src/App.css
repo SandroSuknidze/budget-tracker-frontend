@@ -245,10 +245,10 @@ textarea {
   height: 185px;
   width: 430px;
   background-size: cover;
-  padding: 10px;
+  padding: 20px 10px;
   display: flex;
   justify-content: center;
-
+  border-radius: 10px;
 }
 
 .account.selected {
@@ -322,5 +322,13 @@ input:valid + .input-label {
   }
 }
 
+body {
+  overflow: hidden;
+}
 
-
+.sm-circle {
+  width: 35px;
+  height: 35px;
+  border: 1px solid transparent;
+  border-radius: 100%;
+}
