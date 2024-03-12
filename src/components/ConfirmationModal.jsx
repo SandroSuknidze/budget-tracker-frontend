@@ -16,9 +16,9 @@ function ConfirmationModal({showConfirmation, toggleShowConfirmation, id, onClos
         }
     }
     return (
-        <div className={`${showConfirmation ? 'block' : 'hidden'} z-[70]`}>
+        <div className={`${showConfirmation ? 'block' : 'hidden'} z-[70] `}>
             <div className="overlay z-[70] bg-black bg-opacity-30"></div>
-            <div className={`flex flex-col justify-between w-[400px] h-[150px] rounded absolute top-1/2 left-1/2 translate-x-1/2 -translate-y-1/2 bg-white py-[8px] pl-4 pr-2 z-[80]`}>
+            <div className={`flex flex-col justify-between w-[400px] h-[150px] rounded absolute top-1/2 left-1/2 bg-white py-[8px] pl-4 pr-2 z-[80]`} style={{transform: 'translate(-50%, -50%)'}}>
                 <div className="flex justify-between">
                     <div>
                         Delete Account

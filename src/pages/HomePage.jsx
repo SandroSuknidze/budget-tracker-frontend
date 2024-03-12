@@ -13,6 +13,7 @@ import Toaster from "../components/Toaster.jsx";
 import axiosInstance from "../utils/axios-instance.js";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import CardAccount from "../components/CardAccount.jsx";
+import AddTransactionModal from "../components/AddTransactionModal.jsx";
 
 function HomePage() {
     const [showDropdown, setShowDropdown] = useState(false);
@@ -24,6 +25,7 @@ function HomePage() {
     const [selectedAccountIndex, setSelectedAccountIndex] = useState(0);
     const [editAccount, setEditAccount] = useState(0);
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [addTransactionModal, setAddTransactionModal] = useState(false);
     const authUser = useAuthUser();
     const authState = useAuthHeader();
 
@@ -45,7 +47,7 @@ function HomePage() {
                 });
         }
         fetchAccounts();
-    }, [authState, editAccount, showToaster]);
+    }, [authState, showToaster]);
 
     function toggleDropdown() {
         setShowDropdown(!showDropdown);
@@ -89,6 +91,10 @@ function HomePage() {
                 setToasterText("");
             }, 5000);
         }
+    }
+
+    function toggleAddTransactionModal() {
+        setAddTransactionModal(!addTransactionModal);
     }
 
 
@@ -155,7 +161,7 @@ function HomePage() {
             <CreateAccountModal isOpen={showAccountModal} onClose={toggleAccountModal} activateToaster={toggleToaster} editAccount={editAccount}/>
             <div className="flex justify-between items-center mt-[90px]">
                     {accounts.length === 0 ? (
-                            <div className="w-[35%]" onClick={toggleAccountModal}>
+                            <div className="w-[35%] mb-auto" onClick={toggleAccountModal}>
                                 <CreateAccount />
                             </div>
                     ) : (
@@ -185,6 +191,7 @@ function HomePage() {
                     <input type="text" placeholder="Search" className="pt-[15px] px-[48px] pb-[16px] rounded-[10px] w-full"/>
                     <img src={search} alt="search-icon" className="w-[22px] h-[22px] absolute top-[15px] left-[20px]"/>
                 </div>
+                <AddTransactionModal isOpen={addTransactionModal} onClose={toggleAddTransactionModal}/>
                 <div ref={contentRef} className="w-[22%] mb-auto text-right pl-[82px] flex flex-col justify-between" style={{ height: maxHeight }}>
                     <div className="flex flex-col gap-[15px]">
                         <div className="flex border border-solid bg-white rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
@@ -203,7 +210,7 @@ function HomePage() {
                                 Expenses
                             </div>
                         </div>
-                        <div className="flex border border-solid bg-[#B9E2E6] rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
+                        <div onClick={toggleAddTransactionModal} className="flex border border-solid bg-[#B9E2E6] rounded-[10px] py-[5px] px-[11px] gap-[7px] cursor-pointer">
                             <div className={"sm-circle bg-white p-[5px]"}>
                                 <img src={plusIcon} alt="plus-icon"/>
                             </div>

@@ -7,7 +7,20 @@ function CreateAccountModal({onClose, isOpen, activateToaster, editAccount, }) {
     const authState = useAuthHeader();
     const [currencies, setCurrencies] = useState([]);
     const [error, setError] = useState("");
-
+    const {
+        register,
+        handleSubmit,
+        formState: {errors, isValid},
+        setValue,
+        reset,
+    } = useForm({
+        mode: "all",
+        defaultValues: {
+            currency: "",
+            title: "",
+            description: "",
+        }
+    });
     useEffect(() => {
         async function fetchAccount() {
             if(editAccount !== 0) {
@@ -32,23 +45,10 @@ function CreateAccountModal({onClose, isOpen, activateToaster, editAccount, }) {
         }
 
         fetchAccount();
-    }, [editAccount, authState]);
+    }, [editAccount, authState, setValue]);
 
 
-    const {
-        register,
-        handleSubmit,
-        formState: {errors, isValid},
-        setValue,
-        reset,
-    } = useForm({
-        mode: "all",
-        defaultValues: {
-            currency: "",
-            title: "",
-            description: "",
-        }
-    });
+
 
 
     useEffect(() => {

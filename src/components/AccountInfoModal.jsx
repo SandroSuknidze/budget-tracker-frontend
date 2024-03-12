@@ -9,8 +9,9 @@ function AccountInfoModal({id, title, currency, balance, description, isOpen, on
 
     return (
         <div>
-            <ConfirmationModal showConfirmation={showConfirmation} toggleShowConfirmation={toggleShowConfirmation} id={id} onClose={onClose}/>
             <div className={`overlay ${isOpen ? "block" : "hidden"}`}>
+                <ConfirmationModal showConfirmation={showConfirmation} toggleShowConfirmation={toggleShowConfirmation} id={id} onClose={onClose}/>
+
                 <div className="account-info-modal p-8 h-full">
                     {/*head*/}
                     <div className="flex text-3xl justify-between pt-2">
@@ -21,10 +22,10 @@ function AccountInfoModal({id, title, currency, balance, description, isOpen, on
                                 onCloseCreateAccount();
                                 editAccount(id);
                             }}>
-                                <img src={pencilIcon} alt="close-icon"/>
+                                <img src={pencilIcon} alt="pencil-icon"/>
                             </div>
                             <div className="cursor-pointer" onClick={toggleShowConfirmation}>
-                                <img src={trashIcon} alt="close-icon"/>
+                                <img src={trashIcon} alt="trash-icon"/>
                             </div>
                             <div className="cursor-pointer" onClick={onClose}>
                                 <img src={closeIcon} alt="close-icon"/>
