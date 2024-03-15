@@ -7,6 +7,8 @@ import {useEffect} from "react";
 import Cookies from "js-cookie";
 import {jwtDecode} from "jwt-decode";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
+import CategoriesPage from "./pages/CategoriesPage.jsx";
+import Navbar from "./components/Navbar.jsx";
 
 function App() {
     const signOut = useSignOut();
@@ -40,8 +42,11 @@ function App() {
     return (
         <div>
             <Routes>
-                <Route element={<AuthOutlet  fallbackPath={'/login'} />}>
-                    <Route path='/' element={<HomePage/>} />
+                <Route element={<AuthOutlet fallbackPath={'/login'}/>}>
+                    <Route path='/' element={<Navbar/>}>
+                        <Route index element={<HomePage/>}/>
+                        <Route path='/categories' element={<CategoriesPage/>}/>
+                    </Route>
                 </Route>
                 <Route path="/login" element={<LoginPage/>}/>
             </Routes>

@@ -332,3 +332,11 @@ body {
   border: 1px solid transparent;
   border-radius: 100%;
 }
+
+.input-label {
+  transform: translate(-2px, -36px) scale(0.88);
+  font-size: 12px;
+  span {
+    opacity: 1;
+  }
+}

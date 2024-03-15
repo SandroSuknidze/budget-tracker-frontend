@@ -14,6 +14,7 @@ import axiosInstance from "../utils/axios-instance.js";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import CardAccount from "../components/CardAccount.jsx";
 import AddTransactionModal from "../components/AddTransactionModal.jsx";
+import {Link} from "react-router-dom";
 
 function HomePage() {
     const [showDropdown, setShowDropdown] = useState(false);
@@ -123,7 +124,7 @@ function HomePage() {
                     <ul className="nav-mid w-[43%] text-[20px] relative">
                         <Toaster text={toasterText} isOpen={showToaster} onClose={toggleToaster}/>
                         <li>
-                            <a>Categories</a>
+                            <Link to={"/categories"}>Categories</Link>
                         </li>
                         <li>
                             <a>Subscriptions</a>

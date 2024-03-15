@@ -81,7 +81,7 @@ function CreateAccountModal({onClose, isOpen, activateToaster, editAccount, }) {
         }
 
         fetchData();
-    }, [setValue, editAccount]);
+    }, [setValue]);
 
     const onSubmit = async (data) => {
         if (editAccount === 0) {
