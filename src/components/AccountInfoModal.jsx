@@ -4,7 +4,7 @@ import closeIcon from '../assets/close.svg'
 import ConfirmationModal from "./ConfirmationModal.jsx";
 
 
-function AccountInfoModal({id, title, currency, balance, description, isOpen, onClose, editAccount, onCloseCreateAccount,
+function AccountInfoModal({id, title, currency, balance, description, isOpen, onClose, handleEditAccount, onCloseCreateAccount,
                               showConfirmation ,toggleShowConfirmation }) {
 
     return (
@@ -20,7 +20,7 @@ function AccountInfoModal({id, title, currency, balance, description, isOpen, on
                             <div className="cursor-pointer" onClick={() => {
                                 onClose();
                                 onCloseCreateAccount();
-                                editAccount(id);
+                                handleEditAccount(id);
                             }}>
                                 <img src={pencilIcon} alt="pencil-icon"/>
                             </div>

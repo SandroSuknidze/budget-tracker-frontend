@@ -5,6 +5,7 @@ function LoginInput({ id, label, type, error, register, errorMessage }) {
                 className={`login-input ${error ? "error" : ""}`}
                 type={type}
                 id={id}
+                autoComplete={"yes"}
                 {...register}
                 required
             />

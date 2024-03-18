@@ -21,6 +21,7 @@ function CreateAccountModal({onClose, isOpen, activateToaster, editAccount, }) {
             description: "",
         }
     });
+
     useEffect(() => {
         async function fetchAccount() {
             if(editAccount !== 0) {

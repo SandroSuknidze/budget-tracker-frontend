@@ -9,7 +9,7 @@ function CardAccount({
                          description,
                          isSelected,
                          onClick,
-                         editAccount,
+                         handleEditAccount,
                          onCloseCreateAccount,
                          showConfirmation,
                          toggleShowConfirmation,
@@ -47,7 +47,7 @@ function CardAccount({
                 currency={currency}
                 description={description}
                 balance={balance}
-                editAccount={editAccount}
+                handleEditAccount={handleEditAccount}
                 onCloseCreateAccount={onCloseCreateAccount}
 
                 showConfirmation={showConfirmation}
