@@ -340,3 +340,7 @@ body {
     opacity: 1;
   }
 }
+.transaction-short-list > div:not(:last-child)::after {
+  content: '·';
+  margin: auto 8px;
+}

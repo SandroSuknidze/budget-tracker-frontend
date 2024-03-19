@@ -11,6 +11,8 @@ import trash from "../assets/trash.svg";
 import AddCategory from "../components/AddCategory.jsx";
 import AddCategoryModal from "../components/AddCategoryModal.jsx";
 import {MyContext} from "../App.jsx";
+import transactionsCategoryCheck from "../utils/transactionsCategoryCheck.js";
+import ConfirmModal from "../components/confirmModal.jsx";
 
 function CategoriesPage() {
     const authState = useAuthHeader();
@@ -44,7 +46,7 @@ function CategoriesPage() {
         }
 
         fetchCategories();
-    }, [authState, context.showToaster]);
+    }, [authState]);
 
 
 
@@ -85,26 +87,56 @@ function CategoriesPage() {
         }
     }
 
-    function handleDelete(id, title) {
-        const confirmDelete = window.confirm("Are you sure you want to delete this category?");
-        if(confirmDelete) {
-            axiosInstance.delete(`/categories/${id}`, {
-                headers: {
-                    Authorization: `${authState}`
-                }
-            })
-             .then(() => {
-                 setCategories(prevCategories => prevCategories.filter(category => category.id !== id));
-                 context.toggleToaster(`${title} is successfully removed.`);
-             })
-             .catch(err => {
-                console.log(err);
-            });
+    async function handleDelete(id, title) {
+        try {
+            const hasTransactions = await transactionsCategoryCheck(id, authState);
+
+            console.log(hasTransactions);
+
+            if (hasTransactions) {
+                context.toggleToaster(`Category "${title}" can't be removed because it contains information about your expenses.`);
+            } else {
+                setModalOpen(true);
+                setDeletingCategoryId(id);
+                setDeletingCategoryTitle(title);
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
+    const [modalOpen, setModalOpen] = useState(false);
+    const [deletingCategoryId, setDeletingCategoryId] = useState(null);
+    const [deletingCategoryTitle, setDeletingCategoryTitle] = useState("");
+
+    const handleConfirmDelete = async () => {
+        try {
+            await axiosInstance.delete(`/categories/${deletingCategoryId}`, {
+                headers: {
+                    Authorization: `${authState}`
+                }
+            });
+            setCategories(prevCategories => prevCategories.filter(category => category.id !== deletingCategoryId));
+            context.toggleToaster(`Category "${deletingCategoryTitle}" is successfully removed.`);
+            setModalOpen(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
+
     return (
         <div>
+            <ConfirmModal
+                isOpen={modalOpen}
+                title="Confirm Deletion"
+                message={`Are you sure you want to delete the category "${deletingCategoryTitle}"?`}
+                onConfirm={handleConfirmDelete}
+                onClose={handleCloseModal}
+            />
             <div className={"flex items-center mt-[90px]"}>
                 <div className={"w-[78%] flex flex-col mb-auto"}>
                     <div>
