@@ -8,6 +8,8 @@ import axiosInstance from "../utils/axios-instance.js";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import pencil from "../assets/pencil.svg";
 import trash from "../assets/trash.svg";
+import done from "../assets/done-icon.png";
+import close from "../assets/close.svg";
 import AddCategory from "../components/AddCategory.jsx";
 import AddCategoryModal from "../components/AddCategoryModal.jsx";
 import {MyContext} from "../App.jsx";
@@ -29,6 +31,9 @@ function CategoriesPage() {
     const contentRef = useRef(null);
     const [maxHeight, setMaxHeight] = useState('auto');
 
+    const [editingCategoryId, setEditingCategoryId] = useState(null);
+    const [editedCategoryTitle, setEditedCategoryTitle] = useState('');
+
 
     useEffect(() => {
         function fetchCategories() {
@@ -46,7 +51,7 @@ function CategoriesPage() {
         }
 
         fetchCategories();
-    }, [authState]);
+    }, [authState, context.showToaster]);
 
 
 
@@ -91,8 +96,6 @@ function CategoriesPage() {
         try {
             const hasTransactions = await transactionsCategoryCheck(id, authState);
 
-            console.log(hasTransactions);
-
             if (hasTransactions) {
                 context.toggleToaster(`Category "${title}" can't be removed because it contains information about your expenses.`);
             } else {
@@ -128,6 +131,76 @@ function CategoriesPage() {
         setModalOpen(false);
     };
 
+    const checkCategoryUsage = async (categoryId) => {
+        try {
+            const response = await axiosInstance.get(`/categories/${categoryId}/usage`, {
+                headers: {
+                    Authorization: `${authState}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error checking category usage:', error);
+            return false;
+        }
+    };
+
+
+    const handleConfirmEdit = async () => {
+
+        if (!editedCategoryTitle.trim()) {
+            context.toggleToaster('Category title cannot be empty!');
+            return;
+        }
+
+
+        try {
+            await axiosInstance.patch(`/categories/${editingCategoryId}`, {
+                title: editedCategoryTitle,
+            }, {
+                headers: {
+                    Authorization: `${authState}`
+                }
+            });
+            setCategories(prevCategories =>
+                prevCategories.map(category =>
+                    category.id === editingCategoryId ? { ...category, title: editedCategoryTitle } : category
+                )
+            );
+            setEditingCategoryId(null);
+            setEditedCategoryTitle('');
+            context.toggleToaster('Update saved successfully!');
+
+        } catch (error) {
+            context.toggleToaster(error.response.data.errors.title);
+            console.error('Error editing category:', error);
+        }
+    };
+
+    const handleEditCategory = async (id, title) => {
+        const isCategoryUsed = await checkCategoryUsage(id);
+        if (isCategoryUsed) {
+            context.toggleToaster('This category is already used in income or expenses. Update will change them');
+        }
+        setEditingCategoryId(id);
+        setEditedCategoryTitle(title);
+
+    };
+
+
+
+
+
+    const inputRef = useRef(null);
+    const [inputWidth, setInputWidth] = useState('auto');
+
+    useEffect(() => {
+        if (editingCategoryId !== null) {
+            const textWidth = inputRef.current.scrollWidth - 30;
+            setInputWidth(textWidth + 'px');
+        }
+    }, [editingCategoryId, editedCategoryTitle]);
+
     return (
         <div>
             <ConfirmModal
@@ -149,18 +222,37 @@ function CategoriesPage() {
                          style={{maxHeight: maxHeight, scrollbarWidth: 'none'}}>
                         {filteredCategories.map((category) => (
                             <div key={category.id}
+                                 ref={inputRef}
+
                                  className={`${category.type === 'income' ? 'border-[#21C206]' : 'border-[#EE3F19]'} 
                                             flex justify-between items-center border-2 rounded-xl py-[10px] px-[14px]`}>
-                                <div className={"mr-[10px] cursor-pointer"}>
-                                    {category.title}
-                                </div>
+                                {editingCategoryId === category.id ? (
+                                    <input
+                                        type="text"
+                                        value={editedCategoryTitle}
+                                        onChange={(e) => setEditedCategoryTitle(e.target.value)}
+                                        style={{ width: inputWidth }}
+                                        className={'bg-transparent outline-0 border border-b-[#373737] '}
+                                    />
+                                ) : (
+                                    <div className="mr-[10px] cursor-pointer">{category.title}</div>
+                                )}
                                 {category.is_default === 0 && (
                                     <>
-                                        <div className={"mr-[3px] cursor-pointer"}>
-                                            <img src={pencil} alt="pencil-icon" className={"w-[20px]"}/>
+                                        <div className="mr-[3px] cursor-pointer">
+                                            {editingCategoryId === category.id ? (
+                                                <img onClick={handleConfirmEdit} src={done} alt="done-icon" className="w-[20px]"/>
+                                            ) : (
+                                                <img onClick={() => handleEditCategory(category.id, category.title)} src={pencil} alt="pencil-icon" className="w-[20px]"/>
+                                            )}
                                         </div>
-                                        <div onClick={() => handleDelete(category.id, category.title)} className={"cursor-pointer"}>
-                                            <img src={trash} alt="trash-icon" className={"w-[18px]"}/>
+                                        <div onClick={() => editingCategoryId === category.id ? setEditingCategoryId(null) : handleDelete(category.id, category.title)}
+                                             className="cursor-pointer">
+                                            {editingCategoryId === category.id ? (
+                                                <img src={close} alt="close-icon" className="w-[18px]"/>
+                                            ) : (
+                                                <img src={trash} alt="trash-icon" className="w-[18px]"/>
+                                            )}
                                         </div>
                                     </>
                                 )}
