@@ -17,6 +17,7 @@ import {MyContext} from "../App.jsx";
 import Income from "../components/Income.jsx";
 import Expenses from "../components/Expenses.jsx";
 import SearchInput from "../components/SearchInput.jsx";
+import TransactionInformationModal from "../components/TransactionInformationModal.jsx";
 
 function HomePage() {
     const context = useContext(MyContext);
@@ -32,6 +33,12 @@ function HomePage() {
 
 
     const [sortImage, setSortImage] = useState(1);
+    const [selectedAccountId, setSelectedAccountId] = useState(null);
+    const [selectedAccountCurrency, setSelectedAccountCurrency] = useState("");
+
+    const [selectedTransactionId, setSelectedTransactionId] = useState(null);
+
+
 
     useEffect(() => {
         function fetchAccounts() {
@@ -42,6 +49,11 @@ function HomePage() {
             })
                 .then(res => {
                     setAccounts(res.data);
+                    if (res.data.length > 0) {
+                        const firstAccountId = res.data[0].id;
+                        setSelectedAccountId(firstAccountId);
+                        setSelectedAccountCurrency(res.data[0].currency);
+                    }
                 })
                 .catch(err => {
                     console.log(err);
@@ -52,24 +64,31 @@ function HomePage() {
     }, [authState, context.showToaster]);
 
 
-    useEffect(() => {
-        function fetchTransactions() {
-            axiosInstance.get("/transactions", {
-                headers: {
-                    Authorization: `${authState}`
-                }
+    const fetchTransactions = (accountId) => {
+        axiosInstance.get("/transactions", {
+            params: {
+                accountId: accountId,
+            },
+            headers: {
+                Authorization: `${authState}`
+            }
+        })
+            .then(res => {
+                setTransactions(res.data);
             })
-                .then(res => {
-                    setTransactions(res.data);
-                    console.log(res.data);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-        }
+            .catch(err => {
+                console.log(err);
+            });
+    };
 
-        fetchTransactions();
-    }, [authState, context.showToaster]);
+    useEffect(() => {
+        if (selectedAccountId !== null) {
+            fetchTransactions(selectedAccountId);
+        } else if (accounts.length > 0) {
+            const firstAccountId = accounts[0].id;
+            setSelectedAccountId(firstAccountId);
+        }
+    }, [selectedAccountId, accounts, authState, context.showToaster]);
 
     const filteredTransactions = transactions.filter(transaction => {
         if (!filterOption) return true;
@@ -94,9 +113,12 @@ function HomePage() {
 
 
 
-    const handleSelectAccount = (index) => {
+    const handleSelectAccount = (index, accountId, accountCurrency) => {
         setSelectedAccountIndex(index);
+        setSelectedAccountId(accountId);
+        setSelectedAccountCurrency(accountCurrency);
     };
+
 
 
     function toggleAddTransactionModal() {
@@ -134,6 +156,10 @@ function HomePage() {
         return () => window.removeEventListener('resize', updateMaxTransactionHeight);
     }, []);
 
+    const handleSelectTransaction = (transactionId) => {
+        setSelectedTransactionId(transactionId);
+    };
+
     return (
         <div>
             <CreateAccountModal isOpen={context.showAccountModal} onClose={context.toggleAccountModal}
@@ -154,7 +180,7 @@ function HomePage() {
                                 currency={account.currency}
                                 balance={account.balance}
                                 description={account.description}
-                                onClick={() => handleSelectAccount(index)}
+                                onClick={() => handleSelectAccount(index, account.id, account.currency)} // Pass the account ID
                                 isSelected={index === selectedAccountIndex}
                                 handleEditAccount={context.handleEditAccount}
                                 onCloseCreateAccount={context.toggleAccountModal}
@@ -177,7 +203,9 @@ function HomePage() {
                          style={{maxHeight: maxTransactionHeight, scrollbarWidth: 'none'}}
                     >
                         {filteredTransactions.map((transactions) => (
-                            <div key={transactions.id} className={"flex w-full bg-white rounded-xl px-[18px] py-[12px]"}>
+                            <div key={transactions.id} className={"flex w-full bg-white rounded-xl px-[18px] py-[12px] cursor-pointer"}
+                                 onClick={() => handleSelectTransaction(transactions.id)}
+                            >
                                 <div
                                     className="w-1/4 h-full p-auto text-center bg-[#ECEDED] rounded-xl text-[20px] font-bold
                                         flex justify-center py-[18px] px-[52px]"
@@ -186,7 +214,7 @@ function HomePage() {
                                 </div>
                                 <div className={"flex flex-col w-3/4 pl-[21px]"}>
                                     <div className={"flex justify-between w-full"}>
-                                        <div className={"text-[20px]"}>{transactions.title}</div>
+                                        <div className={"text-[20px]"}>{transactions.title ? transactions.title : transactions.categories[0].title}</div>
                                         <div
                                             className={`${transactions.type === 'expenses' ? 'text-[#EE3F19]' : 'text-[#21C206]'} text-[22px]`}>
                                             {transactions.type === 'expenses' ? '-' : ''}
@@ -228,7 +256,9 @@ function HomePage() {
                         }
                     </div>
                 </div>
-                <AddTransactionModal isOpen={addTransactionModal} onClose={toggleAddTransactionModal}/>
+                <AddTransactionModal isOpen={addTransactionModal} onClose={toggleAddTransactionModal}
+                                     selectedAccountId={selectedAccountId}
+                                     selectedAccountCurrency={selectedAccountCurrency}/>
                 <div ref={contentRef} className="w-[22%] mb-auto text-right pl-[82px] flex flex-col justify-between"
                      style={{height: maxHeight}}>
                     <div className="flex flex-col gap-[15px]">
@@ -287,6 +317,12 @@ function HomePage() {
                     </div>
                 </div>
             </div>
+            {selectedTransactionId !== null && (
+                <TransactionInformationModal
+                    isOpen={true} onClose={() => setSelectedTransactionId(null)}
+                    selectedAccountId={selectedTransactionId}
+                />
+            )}
         </div>
     );
 }

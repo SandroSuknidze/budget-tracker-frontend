@@ -1,3 +1,14 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
 .container {
   width: 100%;
   max-width: 1512px;
@@ -343,4 +354,36 @@ body {
 .transaction-short-list > div:not(:last-child)::after {
   content: '·';
   margin: auto 8px;
+}
+
+
+.categories-label {
+  position: absolute;
+  top: -8px;
+  left: 10px;
+  line-height: 16px;
+  padding: 0 5px;
+  background: white;
+  font-size: 12px;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.date-picker-container {
+  position: relative;
+}
+
+.react-datepicker-wrapper {
+  display: inline-block;
+}
+
+.calendar-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 23px;
 }

@@ -188,9 +188,6 @@ function CategoriesPage() {
     };
 
 
-
-
-
     const inputRef = useRef(null);
     const [inputWidth, setInputWidth] = useState('auto');
 

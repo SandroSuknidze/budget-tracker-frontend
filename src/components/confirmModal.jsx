@@ -3,7 +3,7 @@ function ConfirmModal({isOpen, title, message, onConfirm, onClose}) {
 
     return (
         <div
-            className={`fixed z-10 inset-0 overflow-y-auto ${isOpen ? '' : 'hidden'}`}
+            className={`fixed z-[60] inset-0 overflow-y-auto ${isOpen ? '' : 'hidden'}`}
         >
             <div className={`fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity ${isOpen ? '' : 'hidden'}`}/>
 
