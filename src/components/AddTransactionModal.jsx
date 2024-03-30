@@ -9,7 +9,8 @@ import axiosInstance from "../utils/axios-instance.js";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import {MyContext} from "../App.jsx";
 
-function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccountCurrency}) {
+function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccountCurrency, dataFromModal}) {
+    console.log(dataFromModal);
     const context = useContext(MyContext);
 
     const [selectType, setSelectType] = useState(1);
@@ -89,7 +90,6 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
     const handleSaveButtonClick = () => {
         handleSubmit(onSubmit)();
     };
-
 
     return (
         <div>

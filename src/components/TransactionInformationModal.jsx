@@ -9,7 +9,7 @@ import arrowUp from "../assets/arrow-up.svg";
 import arrowDown from "../assets/arrow-down.svg";
 import ConfirmModal from "./confirmModal.jsx";
 
-function TransactionInformationModal({isOpen, onClose, selectedAccountId}) {
+function TransactionInformationModal({isOpen, onClose, selectedAccountId, handleTransactionEdit}) {
     const context = useContext(MyContext);
     const authState = useAuthHeader();
 
@@ -52,13 +52,18 @@ function TransactionInformationModal({isOpen, onClose, selectedAccountId}) {
             });
     };
 
+    const handlePassData  = (data) => {
+        handleTransactionEdit(data);
+        onClose();
+    }
+
     return (
         <div className={`overlay ${isOpen ? "block" : "hidden"}`}>
             <div className="account-info-modal p-8 h-full">
                 <div className="flex text-3xl justify-between pt-2">
                     <div>Transaction Information</div>
                     <div className='flex justify-between gap-[11px]'>
-                        <div className="cursor-pointer" onClick={onClose}>
+                        <div className="cursor-pointer" onClick={() => handlePassData(transactionInformation.id)}>
                             <img src={pencil} alt="pencil-icon"/>
                         </div>
                         <div className="cursor-pointer" onClick={handleDelete}>

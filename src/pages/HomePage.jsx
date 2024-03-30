@@ -38,6 +38,8 @@ function HomePage() {
 
     const [selectedTransactionId, setSelectedTransactionId] = useState(null);
 
+    const [transactionEdit, setTransactionEdit] = useState(null);
+
 
 
     useEffect(() => {
@@ -160,6 +162,11 @@ function HomePage() {
         setSelectedTransactionId(transactionId);
     };
 
+    const handleTransactionEdit = (transactionId) => {
+        setTransactionEdit(transactionId);
+        toggleAddTransactionModal();
+    }
+
     return (
         <div>
             <CreateAccountModal isOpen={context.showAccountModal} onClose={context.toggleAccountModal}
@@ -258,7 +265,9 @@ function HomePage() {
                 </div>
                 <AddTransactionModal isOpen={addTransactionModal} onClose={toggleAddTransactionModal}
                                      selectedAccountId={selectedAccountId}
-                                     selectedAccountCurrency={selectedAccountCurrency}/>
+                                     selectedAccountCurrency={selectedAccountCurrency}
+                                     dataFromModal={transactionEdit}
+                />
                 <div ref={contentRef} className="w-[22%] mb-auto text-right pl-[82px] flex flex-col justify-between"
                      style={{height: maxHeight}}>
                     <div className="flex flex-col gap-[15px]">
@@ -321,6 +330,7 @@ function HomePage() {
                 <TransactionInformationModal
                     isOpen={true} onClose={() => setSelectedTransactionId(null)}
                     selectedAccountId={selectedTransactionId}
+                    handleTransactionEdit={handleTransactionEdit}
                 />
             )}
         </div>
