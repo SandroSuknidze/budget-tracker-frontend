@@ -81,7 +81,7 @@ function TransactionInformationModal({isOpen, onClose, selectedAccountId}) {
                     <div className={`text-[36px] ${transactionInformation.type === "expenses" ? 'text-[#EE3F19]' : 'text-[#21C206]'} leading-[46px]`}>
                         {transactionInformation.type === "expenses" ? "-" : ""}
                         {transactionInformation.amount?.toLocaleString(undefined, {minimumFractionDigits: 2})}
-                        {transactionInformation.account?.currency.split('(').join('').split("(")[1]}
+                        {transactionInformation.account?.currency.split('(').join('').split(')').join('').split(' ')[1]}
                     </div>
                 </div>
 
