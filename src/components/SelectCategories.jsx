@@ -4,7 +4,7 @@ import {useContext, useEffect, useState} from "react";
 import axiosInstance from "../utils/axios-instance.js";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import {MyContext} from "../App.jsx";
-export default function SelectCategories ({selectType, register, onSelectedCategoriesSubmit, errorMessage}) {
+export default function SelectCategories ({selectType, register, onSelectedCategoriesSubmit, errorMessage, categoriesFromEdit}) {
     const authState = useAuthHeader();
     const context = useContext(MyContext);
 
@@ -13,6 +13,14 @@ export default function SelectCategories ({selectType, register, onSelectedCateg
 
     const [error, setError] = useState("");
 
+
+    useEffect(() => {
+
+        if (categoriesFromEdit.length !== 0) {
+            setSelectedCategories([...categoriesFromEdit])
+
+        }
+    }, [categoriesFromEdit]);
 
     useEffect(() => {
         setSelectedCategories([]);

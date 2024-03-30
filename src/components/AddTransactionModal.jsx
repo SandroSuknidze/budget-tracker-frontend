@@ -10,7 +10,6 @@ import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import {MyContext} from "../App.jsx";
 
 function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccountCurrency, dataFromModal}) {
-    console.log(dataFromModal);
     const context = useContext(MyContext);
 
     const [selectType, setSelectType] = useState(1);
@@ -23,6 +22,16 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
     const [paymentDate, setPaymentDate] = useState("");
 
     const authState = useAuthHeader();
+
+
+    const [categoriesFromEdit, setCategoriesFromEdit] = useState([]);
+
+    const [dateFromEdit, setDateFromEdit] = useState("");
+
+
+    // if (categoriesFromEdit !== null && selectedCategories.length === 0) {
+    //     setSelectedCategories(categoriesFromEdit);
+    // }
 
     const handleSelectedCategoriesSubmit = (categories) => {
         setSelectedCategories(categories);
@@ -59,6 +68,39 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
         }
     });
 
+    useEffect(() => {
+        async function fetchAccount() {
+            if(dataFromModal !== null) {
+                try {
+                    const res = await axiosInstance.get(`/transactions/${dataFromModal}`, {
+                        headers: {
+                            Authorization: `${authState}`
+                        }
+                    });
+
+                    setValue("title", res.data.title);
+                    setValue("amount", res.data.amount.toLocaleString("en-US"));
+                    setCategoriesFromEdit(res.data.categories);
+                    setDateFromEdit(res.data.payment_date);
+                    setValue("payee", res.data.payee);
+                    setValue("description", res.data.description);
+
+                    if (res.data.type === "expenses") {
+                        setSelectType(1);
+                    } else if (res.data.type === "income"){
+                        setSelectType(2);
+                    }
+
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        fetchAccount();
+
+    }, [authState, dataFromModal, setValue]);
+
 
     useEffect(() => {
         setValue("account_id", selectedAccountId);
@@ -70,21 +112,41 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
         data.amount = parseFloat(pureAmount);
         data.type = selectType === 1 ? "expenses" : "income"
 
-        try {
-            const res = await axiosInstance.post(`/transactions`, data, {
-                headers: {
-                    Authorization: `${authState}`
-                },
-            });
-            if (res.status === 201) {
-                setSelectedCategories([]);
-                reset();
-                onClose();
-                context.toggleToaster("Transaction has been successfully added!");
+        if (dataFromModal === null) {
+            try {
+                const res = await axiosInstance.post(`/transactions`, data, {
+                    headers: {
+                        Authorization: `${authState}`
+                    },
+                });
+                if (res.status === 201) {
+                    setSelectedCategories([]);
+                    reset();
+                    onClose();
+                    context.toggleToaster("Transaction has been successfully added!");
+                }
+            } catch (err) {
+                console.log(err.response.data.errors.title[0])
             }
-        } catch (err) {
-            console.log(err.response.data.errors.title[0])
+        } else {
+            try {
+                const res = await axiosInstance.patch(`/transactions/${dataFromModal}`, data, {
+                    headers: {
+                        Authorization: `${authState}`
+                    },
+                });
+                if (res.status === 200) {
+                    setSelectedCategories([]);
+                    reset();
+                    onClose();
+                    context.toggleToaster("Transaction successfully edited!");
+                    dataFromModal = null;
+                }
+            } catch (err) {
+                console.log(err.response.data.errors.title[0])
+            }
         }
+
     }
 
     const handleSaveButtonClick = () => {
@@ -100,7 +162,7 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
                 >
                     {/*head*/}
                     <div className="flex text-3xl justify-between pt-2">
-                        <div>Transaction Information</div>
+                        <div>{dataFromModal === null ? 'Transaction Information' : 'Edit Transaction'}</div>
                         <div className="cursor-pointer" onClick={onClose}>
                             <img src={closeIcon} alt="close-icon"/>
                         </div>
@@ -156,6 +218,7 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
                                 selectType={selectType}
                                 onSelectedCategoriesSubmit={handleSelectedCategoriesSubmit}
                                 errorMessage={errors.categories?.message}
+                                categoriesFromEdit={categoriesFromEdit}
                             />
                             <TransactionInput
                                 register={register("amount", {
@@ -171,6 +234,8 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
                                 isRequired={"required"}
                                 selectedAccountCurrency={selectedAccountCurrency}
                                 errorMessage={errors.amount?.message}
+                                categoriesFromEdit={categoriesFromEdit}
+
                             />
                             <TransactionInput
                                 register={register("payment_date")}
@@ -180,6 +245,7 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
                                 type={"date"}
                                 isRequired={"required"}
                                 errorMessage={errors.payment_date?.message}
+                                dateFromEdit={dateFromEdit}
                             />
                             <TransactionInput
                                 register={register("payee", {

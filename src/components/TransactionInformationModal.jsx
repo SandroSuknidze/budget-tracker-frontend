@@ -26,7 +26,6 @@ function TransactionInformationModal({isOpen, onClose, selectedAccountId, handle
         })
             .then((res) => {
                 setTransactionInformation(res.data)
-                console.log(res.data);
             })
             .catch((err) => {
                  console.log(err);

@@ -4,7 +4,18 @@ import {useEffect, useState} from "react";
 import calendarIcon from "../assets/calendarIcon.svg";
 
 
-function TransactionInput({label, name, type, isRequired, register, errorMessage, onSelectedPaymentDateSubmit, selectedAccountCurrency}) {
+function TransactionInput({
+                              label,
+                              name,
+                              type,
+                              isRequired,
+                              register,
+                              errorMessage,
+                              onSelectedPaymentDateSubmit,
+                              selectedAccountCurrency,
+                              categoriesFromEdit,
+                              dateFromEdit
+                          }) {
     const handleChange = (e) => {
         let inputValue = e.target.value;
         if (/[^0-9.,]/.test(inputValue)) {
@@ -35,9 +46,16 @@ function TransactionInput({label, name, type, isRequired, register, errorMessage
         e.target.setSelectionRange(newCursorPosition, newCursorPosition);
     };
 
+
     const [startDate, setStartDate] = useState(new Date());
     const [defaultDate, setDefaultDate] = useState(new Date());
 
+    useEffect(() => {
+        setStartDate(dateFromEdit)
+    }, [dateFromEdit]);
+
+    // console.log("start", startDate);
+    // console.log("default", defaultDate);
 
     const [paymentDate, setPaymentDate] = useState(new Date());
 
@@ -51,7 +69,7 @@ function TransactionInput({label, name, type, isRequired, register, errorMessage
         }
     }, [onSelectedPaymentDateSubmit, paymentDate]);
 
-
+// console.log("date", dateFromEdit);
 
 
     return (
