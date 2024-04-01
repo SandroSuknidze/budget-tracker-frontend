@@ -61,7 +61,7 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
         defaultValues: {
             "title": "",
             "amount": null,
-            "account_id": selectedAccountId,
+            "account_id": selectedAccountId !== null ? selectedAccountId: 0,
             "categories": selectedCategories,
             "payment_date": paymentDate,
             "type": 1,
@@ -111,6 +111,7 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
         let pureAmount = data.amount.split(",").join('');
         data.amount = parseFloat(pureAmount);
         data.type = selectType === 1 ? "expenses" : "income"
+        data.account_id = selectedAccountId;
 
         if (dataFromModal === null) {
             try {
@@ -123,7 +124,7 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
                     setSelectedCategories([]);
                     reset();
                     onClose();
-                    context.toggleToaster("Transaction has been successfully added!");
+                    context.toggleTransactionToaster("Transaction has been successfully added!");
                 }
             } catch (err) {
                 console.log(err.response.data.errors.title[0])
@@ -139,7 +140,7 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
                     setSelectedCategories([]);
                     reset();
                     onClose();
-                    context.toggleToaster("Transaction successfully edited!");
+                    context.toggleTransactionToaster("Transaction successfully edited!");
                     dataFromModal = null;
                 }
             } catch (err) {
@@ -153,6 +154,16 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
         handleSubmit(onSubmit)();
     };
 
+    const resetValues = () => {
+        onClose();
+        reset();
+        setSelectedCategories([]);
+        // dataFromModal = null;
+        console.log("reset");
+    }
+
+    console.log(selectedAccountId);
+
     return (
         <div>
             <div className={`overlay ${isOpen ? "block" : "hidden"}`}>
@@ -162,8 +173,8 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
                 >
                     {/*head*/}
                     <div className="flex text-3xl justify-between pt-2">
-                        <div>{dataFromModal === null ? 'Transaction Information' : 'Edit Transaction'}</div>
-                        <div className="cursor-pointer" onClick={onClose}>
+                        <div>{dataFromModal === null ? 'Add Transaction' : 'Edit Transaction'}</div>
+                        <div className="cursor-pointer" onClick={resetValues}>
                             <img src={closeIcon} alt="close-icon"/>
                         </div>
                     </div>
@@ -276,7 +287,7 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
                     {/*end body*/}
                     {/*footer*/}
                     <div className="flex justify-end absolute bottom-0 right-0 p-8">
-                        <div onClick={onClose} className="px-2 w-[70px] mr-2 text-center my-auto">
+                        <div onClick={resetValues} className="px-2 w-[70px] mr-2 text-center my-auto">
                             Close
                         </div>
                         <div

@@ -55,6 +55,9 @@ function App() {
     const [editAccount, setEditAccount] = useState(0);
     const [showConfirmation, setShowConfirmation] = useState(false);
 
+    const [showTransactionToaster, setShowTransactionToaster] = useState(false);
+    const [transactionToasterText, setTransactionToasterText] = useState("");
+
     const authUser = useAuthUser();
 
     let name = authUser?.name.split('@')[0];
@@ -77,9 +80,18 @@ function App() {
         }, 5000);
     }
 
+    function toggleTransactionToaster(text) {
+
+        setShowTransactionToaster(!showTransactionToaster);
+        setTransactionToasterText(text);
+        setTimeout(() => {
+            setShowTransactionToaster(false)
+            setTransactionToasterText("");
+        }, 5000);
+    }
+
 
     const handleEditAccount = (id) => {
-        console.log("gaesha");
         setEditAccount(id);
     }
 
@@ -108,6 +120,9 @@ function App() {
             showToaster,
             toasterText,
             name,
+            toggleTransactionToaster,
+            showTransactionToaster,
+            transactionToasterText,
         }}>
             <div>
                 <Routes>

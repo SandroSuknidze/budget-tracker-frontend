@@ -4,6 +4,7 @@ import avatar from "../assets/avatar.svg";
 import LogoutModal from "./LogoutModal.jsx";
 import {useContext, useState} from "react";
 import {MyContext} from "../App.jsx";
+import TransactionToaster from "./TransactionToaster.jsx";
 
 
 function Navbar() {
@@ -33,6 +34,7 @@ function Navbar() {
                     </div>
                     <ul className="nav-mid w-[43%] text-[20px] relative">
                         <Toaster text={context.toasterText} isOpen={context.showToaster} onClose={context.toggleToaster}/>
+                        <TransactionToaster text={context.transactionToasterText} isOpen={context.showTransactionToaster} onClose={context.toggleTransactionToaster}/>
                         <li>
                             <Link to={"/categories"}>Categories</Link>
                         </li>

@@ -90,7 +90,7 @@ function HomePage() {
             const firstAccountId = accounts[0].id;
             setSelectedAccountId(firstAccountId);
         }
-    }, [selectedAccountId, accounts, authState, context.showToaster]);
+    }, [selectedAccountId, accounts, authState, context.showTransactionToaster]);
 
     const filteredTransactions = transactions.filter(transaction => {
         if (!filterOption) return true;
@@ -124,6 +124,10 @@ function HomePage() {
 
 
     function toggleAddTransactionModal() {
+        if (addTransactionModal === true) {
+            setTransactionEdit(null);
+
+        }
         setAddTransactionModal(!addTransactionModal);
     }
 
