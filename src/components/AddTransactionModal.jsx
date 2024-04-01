@@ -158,11 +158,7 @@ function AddTransactionModal({isOpen, onClose, selectedAccountId, selectedAccoun
         onClose();
         reset();
         setSelectedCategories([]);
-        // dataFromModal = null;
-        console.log("reset");
     }
-
-    console.log(selectedAccountId);
 
     return (
         <div>
